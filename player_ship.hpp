@@ -6,13 +6,15 @@
 
 class PlayerShip : public GameObject {
 	public:
-		PlayerShip();
+		PlayerShip( char* spritePath, float LocX, float LocY, float width, float height);
 		void left(float);
 		void right(float);
 		void update(float deltaTime) override;
 	private:
 		SDL_FRect* rect;
 		float pps = 10.0;
+		float locX;
+		float locY;
 };
 
 

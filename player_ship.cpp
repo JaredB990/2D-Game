@@ -3,12 +3,13 @@
 #include "game_objects.hpp"
 #include <SDL3/SDL.h>
 
+
 // Constructor
-PlayerShip::PlayerShip(){
+PlayerShip::PlayerShip(char* spritePath, float LocX, float LocY, float width, float height) {
 	// Access the sprite component to get our rectangle
 	// (destination rectangle)
 	auto* spriteComponent = addComponent<SpriteComponent>();
-	spriteComponent->loadSprite(Engine::instance().getRenderer(),"Sprites\\Falcon.jpg", 256, 920, 64, 64);
+	spriteComponent->loadSprite(Engine::instance().getRenderer(),spritePath, LocX, LocY, width, height);
 	rect = spriteComponent->getRect();
 
 }
