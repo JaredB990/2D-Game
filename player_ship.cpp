@@ -6,40 +6,19 @@
 
 
 // Constructor
-PlayerShip::PlayerShip(char* spritePath, float LocX, float LocY, float width, float height, bool player) {
+Ship::Ship(char* spritePath, float LocX, float LocY, float width, float height) {
 	// Access the sprite component to get our rectangle
 	// (destination rectangle)
 	auto* spriteComponent = addComponent<SpriteComponent>();
 	spriteComponent->loadSprite(Engine::instance().getRenderer(),spritePath, LocX, LocY, width, height);
 	rect = spriteComponent->getRect();
-	this->player = player;
 
 }
 
 // Called once per frame
-void PlayerShip::update(float deltaTime) {
+void Ship::update(float deltaTime) {
 
     GameObject::update(deltaTime);
-
-    // Player-controlled movement
-    for (auto it = Engine::keyEvents.begin(); it != Engine::keyEvents.end(); ++it) {
-        if (it->key.key == SDLK_A && player) {
-            left(deltaTime);
-        }
-        if (it->key.key == SDLK_D && player) {
-            right(deltaTime);
-        }
-    }
-
-    // AI movement
-    if (!player) {
-        aiMoveTimer += deltaTime;
-
-        if (aiMoveTimer >= aiMoveInterval) {
-            right(deltaTime);
-            aiMoveTimer = 0.0f; // reset timer
-        }
-    }
 
     // Clamp to screen using UtilityFunctions
     float windowWidth  = (float)Engine::instance().getWindowWidth();
@@ -52,10 +31,42 @@ void PlayerShip::update(float deltaTime) {
 
 // Movement should be based on the time that has passed
 // for smoothest motion.
-void PlayerShip::left(float dt){
+void Ship::left(float dt){
 	rect->x -= pps * dt;
 }
-
-void PlayerShip::right(float dt){
+void Ship::right(float dt){
 	rect->x += pps * dt;
+}
+void Ship::up(float dt){
+	rect->y -= pps * dt;
+}
+void Ship::down(float dt){
+	rect->y += pps * dt;
+}
+
+void EnemyShip::update(float deltaTime) {
+    GameObject::update(deltaTime);
+
+    // Simple AI: Move down every aiMoveInterval seconds
+    aiMoveTimer += deltaTime;
+    if (aiMoveTimer >= aiMoveInterval) {
+        down(aiMoveTimer);
+        aiMoveTimer = 0.0f; // reset timer
+    }
+}
+
+PlayerShip::PlayerShip(char* spritePath, float LocX, float LocY, float width, float height) : Ship(spritePath, LocX, LocY, width, height) {}
+
+void PlayerShip::update(float deltaTime) {
+    Ship::update(deltaTime);
+
+    // Check for keyboard input and move accordingly
+    for (auto it = Engine::keyEvents.begin(); it != Engine::keyEvents.end(); ++it) {
+        if (it->key.key == SDLK_A) {
+            left(deltaTime);
+        }
+        if (it->key.key == SDLK_D) {
+            right(deltaTime);
+        }
+    }
 }
