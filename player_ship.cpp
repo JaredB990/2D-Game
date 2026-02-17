@@ -1,6 +1,7 @@
 #include "player_ship.hpp"
 #include "engine.hpp"
 #include "game_objects.hpp"
+#include "UtilityFunctions.hpp"
 #include <SDL3/SDL.h>
 
 
@@ -39,6 +40,13 @@ void PlayerShip::update(float deltaTime) {
             aiMoveTimer = 0.0f; // reset timer
         }
     }
+
+    // Clamp to screen using UtilityFunctions
+    float windowWidth  = (float)Engine::instance().getWindowWidth();
+    float windowHeight = (float)Engine::instance().getWindowHeight();
+
+    rect->x = UtilityFunctions::clamp(rect->x, 0.0f, windowWidth - rect->w);
+    rect->y = UtilityFunctions::clamp(rect->y, 0.0f, windowHeight - rect->h);
 }
 
 

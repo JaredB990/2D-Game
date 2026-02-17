@@ -28,6 +28,9 @@ class Engine {
 		void setScene(Scene* scene);
 		void run();
 
+		int getWindowWidth() const;
+		int getWindowHeight() const;
+
 		Engine();
 		~Engine() = default;
 

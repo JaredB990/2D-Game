@@ -24,7 +24,7 @@ add_subdirectory(vendored/SDL_image EXCLUDE_FROM_ALL)
 # MAKE SURE TO ADD ALL OF YOUR CPP FILES
 # Normally, we would probably create a source directory, but for this
 # project just put your .h and .cpp files in the current dir.
-add_executable(Galaga Galaga.cpp game_objects.cpp components.cpp engine.cpp player_ship.cpp)
+add_executable(Galaga Galaga.cpp game_objects.cpp components.cpp engine.cpp player_ship.cpp UtilityFunctions.cpp)
 
 # Link to the actual SDL3 library.
 target_link_libraries(Galaga PRIVATE SDL3_image::SDL3_image SDL3::SDL3 glm::glm )

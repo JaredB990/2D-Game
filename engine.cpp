@@ -76,3 +76,16 @@ void Engine::shutdown() {
 	SDL_DestroyWindow(window);
 	SDL_Quit();
 }
+
+int Engine::getWindowWidth() const {
+    int w;
+    SDL_GetWindowSize(window, &w, nullptr);
+    return w;
+}
+
+int Engine::getWindowHeight() const {
+    int h;
+    SDL_GetWindowSize(window, nullptr, &h);
+    return h;
+}
+
