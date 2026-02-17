@@ -28,7 +28,7 @@ class EnemyShip : public Ship {
 		void update(float deltaTime) override;
 	private:
 		float aiMoveTimer = 0.0f;
-		float aiMoveInterval = 20.0f; // move every 20 seconds
+		float aiMoveInterval = 30.0f; // move every every 1/2 second
 	};
 
 class PlayerShip : public Ship {

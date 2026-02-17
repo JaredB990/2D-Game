@@ -48,7 +48,7 @@ void EnemyShip::update(float deltaTime) {
     GameObject::update(deltaTime);
 
     // Simple AI: Move down every aiMoveInterval seconds
-    aiMoveTimer += deltaTime;
+    aiMoveTimer += 1;
     if (aiMoveTimer >= aiMoveInterval) {
         down(aiMoveTimer);
         aiMoveTimer = 0.0f; // reset timer
@@ -68,5 +68,13 @@ void PlayerShip::update(float deltaTime) {
         if (it->key.key == SDLK_D) {
             right(deltaTime);
         }
+    }
+}
+
+void PlayerShip::onCollision() {
+    health--;
+    if (health <= 0) {
+        // Handle player death (e.g., reset position, end game, etc.)
+        delete this;        
     }
 }
