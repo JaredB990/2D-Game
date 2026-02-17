@@ -4,15 +4,11 @@
 #include "UtilityFunctions.hpp"
 #include <SDL3/SDL.h>
 
-
 // Constructor
 Ship::Ship(char* spritePath, float LocX, float LocY, float width, float height) {
-	// Access the sprite component to get our rectangle
-	// (destination rectangle)
-	auto* spriteComponent = addComponent<SpriteComponent>();
-	spriteComponent->loadSprite(Engine::instance().getRenderer(),spritePath, LocX, LocY, width, height);
-	rect = spriteComponent->getRect();
-
+    auto* spriteComponent = addComponent<SpriteComponent>();
+    spriteComponent->loadSprite(Engine::instance().getRenderer(),spritePath, LocX, LocY, width, height);
+    rect = spriteComponent->getRect();
 }
 
 // Called once per frame
@@ -28,39 +24,45 @@ void Ship::update(float deltaTime) {
     rect->y = UtilityFunctions::clamp(rect->y, 0.0f, windowHeight - rect->h);
 }
 
-
-// Movement should be based on the time that has passed
-// for smoothest motion.
+// Movement
 void Ship::left(float dt){
-	rect->x -= pps * dt;
+    rect->x -= pps * dt;
 }
 void Ship::right(float dt){
-	rect->x += pps * dt;
+    rect->x += pps * dt;
 }
 void Ship::up(float dt){
-	rect->y -= pps * dt;
+    rect->y -= pps * dt;
 }
 void Ship::down(float dt){
-	rect->y += pps * dt;
+    rect->y += pps * dt;
 }
 
 void EnemyShip::update(float deltaTime) {
     GameObject::update(deltaTime);
-
-    // Simple AI: Move down every aiMoveInterval seconds
     aiMoveTimer += 1;
     if (aiMoveTimer >= aiMoveInterval) {
         down(aiMoveTimer);
-        aiMoveTimer = 0.0f; // reset timer
+        aiMoveTimer = 0.0f;
     }
 }
 
-PlayerShip::PlayerShip(char* spritePath, float LocX, float LocY, float width, float height) : Ship(spritePath, LocX, LocY, width, height) {}
+PlayerShip::PlayerShip(char* spritePath, float LocX, float LocY, float width, float height) : Ship(spritePath, LocX, LocY, width, height) {
+    health = 3;
+}
+
+static inline bool rectsIntersect(const SDL_FRect* a, const SDL_FRect* b) {
+    if (!a || !b) return false;
+    return !(a->x + a->w < b->x ||
+             b->x + b->w < a->x ||
+             a->y + a->h < b->y ||
+             b->y + b->h < a->y);
+}
 
 void PlayerShip::update(float deltaTime) {
     Ship::update(deltaTime);
 
-    // Check for keyboard input and move accordingly
+    // Movement from input
     for (auto it = Engine::keyEvents.begin(); it != Engine::keyEvents.end(); ++it) {
         if (it->key.key == SDLK_A) {
             left(deltaTime);
@@ -69,12 +71,30 @@ void PlayerShip::update(float deltaTime) {
             right(deltaTime);
         }
     }
-}
 
-void PlayerShip::onCollision() {
-    health--;
-    if (health <= 0) {
-        // Handle player death (e.g., reset position, end game, etc.)
-        delete this;        
+    // Collision detection with enemies
+    Scene* scene = Engine::instance().scene;
+    if (!scene) return;
+
+    for (GameObject* go : scene->getObjects()) {
+        if (go == this) continue;
+        EnemyShip* enemy = dynamic_cast<EnemyShip*>(go);
+        if (!enemy) continue;
+
+        auto enemySprite = enemy->getComponent<SpriteComponent>();
+        if (!enemySprite) continue;
+
+        SDL_FRect* er = enemySprite->getRect();
+        if (rectsIntersect(rect, er)) {
+            // Player loses 1 HP
+            health--;
+            // destroy enemy
+            enemy->destroy();
+            // destroy player if HP <= 0
+            if (health <= 0) {
+                this->destroy();
+            }
+            break;
+        }
     }
 }
