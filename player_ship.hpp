@@ -22,11 +22,13 @@ class Ship : public GameObject {
 
 class EnemyShip : public Ship {
     public:
-        EnemyShip( char* spritePath, float LocX, float LocY, float width, float height, bool canShoot = false);
+        EnemyShip( char* spritePath, float LocX, float LocY, float width, float height, bool canShoot = false, int health = 1);
         void update(float deltaTime) override;
     private:
         float aiMoveTimer = 0.0f;
         float aiMoveInterval = 30.0f; // move every every 1/2 second
+        int health;
+        friend class Bullet;
     };
 
 class PlayerShip : public Ship {

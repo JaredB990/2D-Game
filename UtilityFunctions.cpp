@@ -1,4 +1,5 @@
 #include "UtilityFunctions.hpp"
+#include "player_ship.hpp"
 
 // AABB collision check
 bool UtilityFunctions::checkCollision(const SDL_FRect& a, const SDL_FRect& b) {
@@ -9,5 +10,11 @@ a.y + a.h < b.y || b.y + b.h < a.y);
 float UtilityFunctions::clamp(float value, float min, float max) {
 if (value < min) return min;
 if (value > max) return max;
+return value;
+}
+
+float UtilityFunctions::enemyClamp(float value, float min, float max, EnemyShip* enemy) {
+if (value < min) enemy->destroy();
+if (value > max) enemy->destroy();
 return value;
 }

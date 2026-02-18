@@ -4,6 +4,14 @@
 #include "UtilityFunctions.hpp"
 #include <SDL3/SDL.h>
 
+static inline bool rectsIntersect(const SDL_FRect* a, const SDL_FRect* b) {
+    if (!a || !b) return false;
+    return !(a->x + a->w < b->x ||
+             b->x + b->w < a->x ||
+             a->y + a->h < b->y ||
+             b->y + b->h < a->y);
+}
+
 // Constructor
 Ship::Ship(char* spritePath, float LocX, float LocY, float width, float height, bool canShoot) {
     auto* spriteComponent = addComponent<SpriteComponent>();
@@ -39,7 +47,8 @@ void Ship::down(float dt){
     rect->y += pps * dt;
 }
 
-EnemyShip::EnemyShip(char* spritePath, float LocX, float LocY, float width, float height, bool canShoot) : Ship(spritePath, LocX, LocY, width, height, canShoot) {
+EnemyShip::EnemyShip(char* spritePath, float LocX, float LocY, float width, float height, bool canShoot, int health) : Ship(spritePath, LocX, LocY, width, height, canShoot) {
+    this->health = health;
     aiMoveTimer = 0.0f;
 }
 
@@ -50,19 +59,16 @@ void EnemyShip::update(float deltaTime) {
         down(aiMoveTimer);
         aiMoveTimer = 0.0f;
     }
+
+    float windowWidth  = (float)Engine::instance().getWindowWidth();
+    float windowHeight = (float)Engine::instance().getWindowHeight();
+
+    rect->x = UtilityFunctions::enemyClamp(rect->x, 0.0f, windowWidth - rect->w, this);
+    rect->y = UtilityFunctions::enemyClamp(rect->y, 0.0f, windowHeight - rect->h, this);
 }
 
 PlayerShip::PlayerShip(char* spritePath, float LocX, float LocY, float width, float height, bool canShoot) : Ship(spritePath, LocX, LocY, width, height, canShoot) {
     health = 3;
-}
-
-
-static inline bool rectsIntersect(const SDL_FRect* a, const SDL_FRect* b) {
-    if (!a || !b) return false;
-    return !(a->x + a->w < b->x ||
-             b->x + b->w < a->x ||
-             a->y + a->h < b->y ||
-             b->y + b->h < a->y);
 }
 
 void PlayerShip::update(float deltaTime) {
@@ -112,7 +118,7 @@ void PlayerShip::shoot() {
     if (!canShoot) return;
 
     // Create a new bullet above the player
-    auto* bullet = new Bullet("Sprites\\Bullet.png", rect->x + rect->w / 2 - 8, rect->y - 16, 16, 16);
+    auto* bullet = new Bullet("Sprites\\Laser_Bullet.png", rect->x + rect->w / 2 - 8, rect->y - 16, 16, 16);
     bullet->setOwned(true);
     Engine::instance().scene->addObject(bullet);
 }
@@ -126,6 +132,29 @@ Bullet::Bullet(char* spritePath, float LocX, float LocY, float width, float heig
 void Bullet::update(float deltaTime) {
     GameObject::update(deltaTime);
     rect->y -= speed * deltaTime;
+
+    Scene* scene = Engine::instance().scene;
+    if (!scene) return;
+
+    for (GameObject* go : scene->getObjects()) {
+        if (go == this) continue;
+        EnemyShip* enemy = dynamic_cast<EnemyShip*>(go);
+        if (!enemy) continue;
+
+        auto enemySprite = enemy->getComponent<SpriteComponent>();
+        if (!enemySprite) continue;
+
+        SDL_FRect* er = enemySprite->getRect();
+        if (rectsIntersect(rect, er)) {
+            this->destroy();
+            enemy->health--;
+            if (enemy->health <= 0) {
+                enemy->destroy();
+            }
+            break;
+        }
+    }
+
 
     // Destroy bullet if it goes off screen
     if (rect->y + rect->h < 0) {
