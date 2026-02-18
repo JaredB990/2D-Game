@@ -5,10 +5,11 @@
 #include <SDL3/SDL.h>
 
 // Constructor
-Ship::Ship(char* spritePath, float LocX, float LocY, float width, float height) {
+Ship::Ship(char* spritePath, float LocX, float LocY, float width, float height, bool canShoot) {
     auto* spriteComponent = addComponent<SpriteComponent>();
     spriteComponent->loadSprite(Engine::instance().getRenderer(),spritePath, LocX, LocY, width, height);
     rect = spriteComponent->getRect();
+    this->canShoot = canShoot;
 }
 
 // Called once per frame
@@ -38,6 +39,10 @@ void Ship::down(float dt){
     rect->y += pps * dt;
 }
 
+EnemyShip::EnemyShip(char* spritePath, float LocX, float LocY, float width, float height, bool canShoot) : Ship(spritePath, LocX, LocY, width, height, canShoot) {
+    aiMoveTimer = 0.0f;
+}
+
 void EnemyShip::update(float deltaTime) {
     GameObject::update(deltaTime);
     aiMoveTimer += 1;
@@ -47,9 +52,10 @@ void EnemyShip::update(float deltaTime) {
     }
 }
 
-PlayerShip::PlayerShip(char* spritePath, float LocX, float LocY, float width, float height) : Ship(spritePath, LocX, LocY, width, height) {
+PlayerShip::PlayerShip(char* spritePath, float LocX, float LocY, float width, float height, bool canShoot) : Ship(spritePath, LocX, LocY, width, height, canShoot) {
     health = 3;
 }
+
 
 static inline bool rectsIntersect(const SDL_FRect* a, const SDL_FRect* b) {
     if (!a || !b) return false;
@@ -69,6 +75,9 @@ void PlayerShip::update(float deltaTime) {
         }
         if (it->key.key == SDLK_D) {
             right(deltaTime);
+        }
+        if (it->key.key == SDLK_SPACE) {
+            shoot();
         }
     }
 
@@ -96,5 +105,30 @@ void PlayerShip::update(float deltaTime) {
             }
             break;
         }
+    }
+}
+
+void PlayerShip::shoot() {
+    if (!canShoot) return;
+
+    // Create a new bullet above the player
+    auto* bullet = new Bullet("Sprites\\Bullet.png", rect->x + rect->w / 2 - 8, rect->y - 16, 16, 16);
+    bullet->setOwned(true);
+    Engine::instance().scene->addObject(bullet);
+}
+
+Bullet::Bullet(char* spritePath, float LocX, float LocY, float width, float height) {
+            auto* spriteComponent = addComponent<SpriteComponent>();
+            spriteComponent->loadSprite(Engine::instance().getRenderer(),spritePath, LocX, LocY, width, height);
+            rect = spriteComponent->getRect();
+        }
+
+void Bullet::update(float deltaTime) {
+    GameObject::update(deltaTime);
+    rect->y -= speed * deltaTime;
+
+    // Destroy bullet if it goes off screen
+    if (rect->y + rect->h < 0) {
+        this->destroy();
     }
 }

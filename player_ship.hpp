@@ -6,7 +6,7 @@
 
 class Ship : public GameObject {
     public:
-        Ship( char* spritePath, float LocX, float LocY, float width, float height);
+        Ship( char* spritePath, float LocX, float LocY, float width, float height, bool canShoot);
         void left(float);
         void right(float);
         void up(float);
@@ -17,11 +17,12 @@ class Ship : public GameObject {
         float pps = .5f; // pixels per second
         float locX;
         float locY;
+        bool canShoot;
 };
 
 class EnemyShip : public Ship {
     public:
-        EnemyShip( char* spritePath, float LocX, float LocY, float width, float height) : Ship(spritePath, LocX, LocY, width, height) {}
+        EnemyShip( char* spritePath, float LocX, float LocY, float width, float height, bool canShoot = false);
         void update(float deltaTime) override;
     private:
         float aiMoveTimer = 0.0f;
@@ -30,9 +31,19 @@ class EnemyShip : public Ship {
 
 class PlayerShip : public Ship {
     public:
-        PlayerShip( char* spritePath, float LocX, float LocY, float width, float height);
+        PlayerShip( char* spritePath, float LocX, float LocY, float width, float height, bool canShoot = true);
         void update(float deltaTime) override;
+        void shoot();
     private:
         int health = 3;
+};
+
+class Bullet : public GameObject {
+    public:
+        Bullet(char* spritePath, float LocX, float LocY, float width, float height);
+        void update(float deltaTime) override;
+    private:
+        SDL_FRect* rect;
+        float speed = 0.5f; // pixels per second
 };
 #endif
