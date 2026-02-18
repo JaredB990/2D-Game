@@ -69,7 +69,7 @@ void EnemyShip::update(float deltaTime) {
     if (canShoot) {
         shootTimer += 1;
         if (shootTimer >= shootInterval) {
-            shoot();
+            shoot(true, 0.5f);
             shootTimer = 0.0f;
             SDL_Log("Enemy at (%.2f, %.2f) shoots!", rect->x, rect->y);
         }
@@ -123,17 +123,17 @@ void PlayerShip::update(float deltaTime) {
     }
 }
 
-void Ship::shoot(bool isEnemy) {
+void Ship::shoot(bool isEnemy, float speed) {
     Scene *scene = Engine::instance().scene;
     if (!isEnemy) {
         // Create a new bullet above the player
-        auto* bullet = new Bullet("Sprites\\Laser_Bullet.png", rect->x + rect->w / 2 - 8, rect->y - 16, 16, 16, -0.5f);
+        auto* bullet = new Bullet("Sprites\\Laser_Bullet.png", rect->x + rect->w / 2 - 8, rect->y - 16, 16, 16, speed);
         bullet->setOwned(true);
         scene->addPendingObject(bullet);
     }
     else{
         // Create a new bullet below the enemy
-        auto* bullet = new Bullet("Sprites\\Enemy_Bullet.png", rect->x + rect->w / 2 - 8, rect->y + rect->h, 16, 16, 0.5f, true);
+        auto* bullet = new Bullet("Sprites\\Laser_Bullet.png", rect->x + rect->w / 2 - 8, rect->y + rect->h, 16, 16, speed, true);
         bullet->setOwned(true);
         scene->addPendingObject(bullet);
     }

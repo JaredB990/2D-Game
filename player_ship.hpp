@@ -18,7 +18,7 @@ class Ship : public GameObject {
         float locX;
         float locY;
         bool canShoot;
-        void shoot(bool isEnemy = false);
+        void shoot(bool isEnemy = false, float speed = -0.5f);
 };
 
 class EnemyShip : public Ship {
