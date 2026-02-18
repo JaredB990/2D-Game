@@ -40,6 +40,7 @@ class Engine {
 
 		SDL_Window* window;
 		SDL_Renderer* renderer;
+		SDL_Texture* backgroundTexture = nullptr;
 		bool running = false;
 		// Notice that we are storing copies of the
 		// events, not pointers or references.

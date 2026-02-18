@@ -13,63 +13,83 @@ SDL_Renderer* Engine::getRenderer() { return this->renderer; };
 
 void Engine::setScene(Scene *scene) { this->scene = scene; }
 void Engine::run() {
-	running = true;
-	while (running) {
-		// Clear the events from the last frame first.
-		Engine::keyEvents.clear();
-		SDL_Event event;
-		while (SDL_PollEvent(&event)) {
-			if (event.type == SDL_EVENT_QUIT) {
-				SDL_Log("Shutting down...");
-				running = false;
-			}
-			if (event.type == SDL_EVENT_KEY_DOWN) {
-				// Since we are storing copies of events, this
-				// works.  Would not work if we were storing pointers
-				// as event is a local variable to this function and
-				// would always have the same address.
-				Engine::keyEvents.push_back(event);
-			}
-		}
+    running = true;
 
-		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-		SDL_RenderClear(renderer);
-		scene->updateScene(targetFrameTime);
-		SDL_RenderPresent(renderer);
-		// Naive delay that doesn't take into account
-		// how long the loop ran.
-		SDL_Delay(targetFrameTime);
-	}
+    while (running) {
+        Engine::keyEvents.clear();
+
+        SDL_Event event;
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_EVENT_QUIT) {
+                SDL_Log("Shutting down...");
+                running = false;
+            }
+
+            if (event.type == SDL_EVENT_KEY_DOWN) {
+                Engine::keyEvents.push_back(event);
+            }
+        }
+
+        // ---- UPDATE ----
+        scene->updateScene(targetFrameTime);
+
+        // ---- RENDER ----
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        SDL_RenderClear(renderer);
+
+		SDL_FRect destRect = { 0, 0, (float)getWindowWidth(), (float)getWindowHeight()};
+        SDL_RenderTexture(renderer, backgroundTexture, NULL, &destRect);
+
+        scene->updateScene(targetFrameTime);   // <-- ideally separate update and render
+
+        SDL_RenderPresent(renderer);
+
+        SDL_Delay(targetFrameTime);
+    }
 }
+
 
 bool Engine::init() {
-	if (!SDL_Init(SDL_INIT_VIDEO)) {
-		SDL_Log("SDL_Init failed: %s", SDL_GetError());
-		return false;
-	}
+    if (!SDL_Init(SDL_INIT_VIDEO)) {
+        SDL_Log("SDL_Init failed: %s", SDL_GetError());
+        return false;
+    }
 
-	// Gotta draw somewhere....
-	window = SDL_CreateWindow("RGB Color Cycle", 800, 600, SDL_WINDOW_FULLSCREEN);
+    window = SDL_CreateWindow("RGB Color Cycle", 800, 600, SDL_WINDOW_FULLSCREEN);
+    if (!window) {
+        SDL_Log("SDL_CreateWindow failed: %s", SDL_GetError());
+        SDL_Quit();
+        return false;
+    }
 
-	if (!window) {
-		SDL_Log("SDL_CreateWindow failed: %s", SDL_GetError());
-		SDL_Quit();
-		return false;
-	}
+    renderer = SDL_CreateRenderer(window, NULL);
+    if (!renderer) {
+        SDL_Log("SDL_CreateRenderer failed: %s", SDL_GetError());
+        SDL_DestroyWindow(window);
+        SDL_Quit();
+        return false;
+    }
 
-	// Who is in charge of drawing?
-	renderer = SDL_CreateRenderer(window, NULL);
-	if (!renderer) {
-		SDL_Log("SDL_CreateRenderer failed: %s", SDL_GetError());
-		SDL_DestroyWindow(window);
-		SDL_Quit();
-		return false;
-	}
+    // Load background image ONCE
+    SDL_Surface* surface = IMG_Load("Sprites/Space.jpg");
+    if (!surface) {
+        SDL_Log("IMG_Load failed: %s", SDL_GetError());
+        return false;
+    }
 
-	SDL_SetRenderVSync(renderer, 0);
+    backgroundTexture = SDL_CreateTextureFromSurface(renderer, surface);
+    SDL_DestroySurface(surface);
 
-	return true;
+    if (!backgroundTexture) {
+        SDL_Log("CreateTexture failed: %s", SDL_GetError());
+        return false;
+    }
+
+    SDL_SetRenderVSync(renderer, 0);
+
+    return true;
 }
+
 
 void Engine::shutdown() {
 	SDL_DestroyRenderer(renderer);

@@ -5,18 +5,29 @@
 int main(int argc, char** argv) {
     Engine& engine = Engine::instance();
 
-    Scene scene;
+    Scene GameScene;
+    Scene TitleScene;
+    Scene EndScene;
     PlayerShip playerShip("Sprites\\Falcon.png",256, 920, 64, 64, true);
     for (int x = 128; x < 1024; x+=64) {
         for (int y = 128; y < 512; y+=64) {
             auto* enemy = new EnemyShip("Sprites\\Lvl1Enemy.png",x, y, 48, 48, true, 1);
             enemy->setOwned(true);
-            scene.addObject(enemy);
+            GameScene.addObject(enemy);
         }
 
     }
 
-    scene.addObject(&playerShip);
-    engine.setScene(&scene);
+    
+
+
+
+    GameScene.addObject(&playerShip);
+
+
+
+
+
+    engine.setScene(&GameScene);
     engine.run();
 }
