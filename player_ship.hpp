@@ -18,6 +18,7 @@ class Ship : public GameObject {
         float locX;
         float locY;
         bool canShoot;
+        void shoot(bool isEnemy = false);
 };
 
 class EnemyShip : public Ship {
@@ -25,6 +26,8 @@ class EnemyShip : public Ship {
         EnemyShip( char* spritePath, float LocX, float LocY, float width, float height, bool canShoot = false, int health = 1);
         void update(float deltaTime) override;
     private:
+        float shootTimer = 0.0f;
+        float shootInterval = 60.0f; // shoot every 1 second
         float aiMoveTimer = 0.0f;
         float aiMoveInterval = 30.0f; // move every every 1/2 second
         int health;
@@ -35,17 +38,18 @@ class PlayerShip : public Ship {
     public:
         PlayerShip( char* spritePath, float LocX, float LocY, float width, float height, bool canShoot = true);
         void update(float deltaTime) override;
-        void shoot();
     private:
         int health = 3;
+        friend class Bullet;
 };
 
 class Bullet : public GameObject {
     public:
-        Bullet(char* spritePath, float LocX, float LocY, float width, float height);
+        Bullet(char* spritePath, float LocX, float LocY, float width, float height, float speed, bool isEnemyBullet = false);
         void update(float deltaTime) override;
     private:
         SDL_FRect* rect;
-        float speed = 0.5f; // pixels per second
+        float speed; // pixels per second
+        bool isEnemyBullet;
 };
 #endif

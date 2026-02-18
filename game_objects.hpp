@@ -63,12 +63,22 @@ public:
         ++it;
       }
     }
+    if (!pendingObjects.empty()) {
+      for (GameObject* go : pendingObjects) {
+        addObject(go);
+      }
+      pendingObjects.clear();
+    }
   }
+
 
   std::vector<GameObject*>& getObjects() { return game_objects; }
 
+  std::vector<GameObject *> pendingObjects;
+  void addPendingObject(GameObject *go) { pendingObjects.push_back(go); }
 private:
   std::vector<GameObject *> game_objects;
+  
 };
 
 #endif
