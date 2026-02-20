@@ -13,9 +13,9 @@ static inline bool rectsIntersect(const SDL_FRect* a, const SDL_FRect* b) {
 }
 
 // Constructor
-Ship::Ship(char* spritePath, float LocX, float LocY, float width, float height, bool canShoot) {
+Ship::Ship(SDL_Texture* texture, float LocX, float LocY, float width, float height, bool canShoot) {
     auto* spriteComponent = addComponent<SpriteComponent>();
-    spriteComponent->loadSprite(Engine::instance().getRenderer(),spritePath, LocX, LocY, width, height);
+    spriteComponent->loadSprite(Engine::instance().getRenderer(),texture, LocX, LocY, width, height);
     rect = spriteComponent->getRect();
     this->canShoot = canShoot;
 }
@@ -47,7 +47,7 @@ void Ship::down(float dt){
     rect->y += pps * dt;
 }
 
-EnemyShip::EnemyShip(char* spritePath, float LocX, float LocY, float width, float height, bool canShoot, int health) : Ship(spritePath, LocX, LocY, width, height, canShoot) {
+EnemyShip::EnemyShip(SDL_Texture* texture, float LocX, float LocY, float width, float height, bool canShoot, int health) : Ship(texture, LocX, LocY, width, height, canShoot) {
     this->health = health;
     aiMoveTimer = 0.0f;
 }
@@ -76,7 +76,7 @@ void EnemyShip::update(float deltaTime) {
     }
 }
 
-PlayerShip::PlayerShip(char* spritePath, float LocX, float LocY, float width, float height, bool canShoot) : Ship(spritePath, LocX, LocY, width, height, canShoot) {
+PlayerShip::PlayerShip(SDL_Texture* texture, float LocX, float LocY, float width, float height, bool canShoot) : Ship(texture, LocX, LocY, width, height, canShoot) {
     health = 3;
 }
 
@@ -127,23 +127,23 @@ void Ship::shoot(bool isEnemy, float speed) {
     Scene *scene = Engine::instance().scene;
     if (!isEnemy) {
         // Create a new bullet above the player
-        auto* bullet = new Bullet("Sprites\\Laser_Bullet.png", rect->x + rect->w / 2 - 8, rect->y - 16, 16, 16, speed);
+        auto* bullet = new Bullet(textureManager::instance().getTexture("Sprites\\Laser_bullet.png"), rect->x + rect->w / 2 - 8, rect->y - 16, 16, 16, speed);
         bullet->setOwned(true);
         scene->addPendingObject(bullet);
     }
     else{
         // Create a new bullet below the enemy
-        auto* bullet = new Bullet("Sprites\\Laser_Bullet.png", rect->x + rect->w / 2 - 8, rect->y + rect->h, 16, 16, speed, true);
+        auto* bullet = new Bullet(textureManager::instance().getTexture("Sprites\\Laser_bullet.png"), rect->x + rect->w / 2 - 8, rect->y + rect->h, 16, 16, speed, true);
         bullet->setOwned(true);
         scene->addPendingObject(bullet);
     }
 }
 
-Bullet::Bullet(char* spritePath, float LocX, float LocY, float width, float height,float speed,bool isEnemyBullet) {
+Bullet::Bullet(SDL_Texture* texture, float LocX, float LocY, float width, float height,float speed,bool isEnemyBullet) {
     this->speed = speed;
     this->isEnemyBullet = isEnemyBullet;
     auto* spriteComponent = addComponent<SpriteComponent>();
-    spriteComponent->loadSprite(Engine::instance().getRenderer(),spritePath, LocX, LocY, width, height);
+    spriteComponent->loadSprite(Engine::instance().getRenderer(),texture, LocX, LocY, width, height);
     rect = spriteComponent->getRect();
 }
 

@@ -6,7 +6,7 @@
 
 class Ship : public GameObject {
     public:
-        Ship( char* spritePath, float LocX, float LocY, float width, float height, bool canShoot);
+        Ship(SDL_Texture* texture, float LocX, float LocY, float width, float height, bool canShoot);
         void left(float);
         void right(float);
         void up(float);
@@ -23,7 +23,7 @@ class Ship : public GameObject {
 
 class EnemyShip : public Ship {
     public:
-        EnemyShip( char* spritePath, float LocX, float LocY, float width, float height, bool canShoot = false, int health = 1);
+        EnemyShip(SDL_Texture* texture, float LocX, float LocY, float width, float height, bool canShoot = false, int health = 1);
         void update(float deltaTime) override;
     private:
         float shootTimer = 0.0f;
@@ -36,7 +36,7 @@ class EnemyShip : public Ship {
 
 class PlayerShip : public Ship {
     public:
-        PlayerShip( char* spritePath, float LocX, float LocY, float width, float height, bool canShoot = true);
+        PlayerShip(SDL_Texture* texture, float LocX, float LocY, float width, float height, bool canShoot = true);
         void update(float deltaTime) override;
     private:
         int health = 3;
@@ -45,7 +45,7 @@ class PlayerShip : public Ship {
 
 class Bullet : public GameObject {
     public:
-        Bullet(char* spritePath, float LocX, float LocY, float width, float height, float speed, bool isEnemyBullet = false);
+        Bullet(SDL_Texture* texture, float LocX, float LocY, float width, float height, float speed, bool isEnemyBullet = false);
         void update(float deltaTime) override;
     private:
         SDL_FRect* rect;

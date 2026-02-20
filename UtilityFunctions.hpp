@@ -20,6 +20,10 @@ static float enemyClamp(float value, float min, float max, EnemyShip* enemy);
 class textureManager {
     public:
     static std::map<std::string, SDL_Texture*> textures;
+		static textureManager& instance(){
+			static textureManager instance;
+			return instance;
+		}
     SDL_Texture* loadTexture(const std::string& path, SDL_Renderer* renderer);
     std::map<std::string, SDL_Texture*>& getTextures() { return textures; }
     SDL_Texture* getTexture(const std::string& path); 
