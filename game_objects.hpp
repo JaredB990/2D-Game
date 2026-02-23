@@ -71,6 +71,8 @@ public:
     }
   }
 
+  void addScore(int points) { score += points; }
+  int getScore() const { return score; }
 
   std::vector<GameObject*>& getObjects() { return game_objects; }
 
@@ -78,6 +80,8 @@ public:
   void addPendingObject(GameObject *go) { pendingObjects.push_back(go); }
 private:
   std::vector<GameObject *> game_objects;
+
+  int score = 0;
   
 };
 
