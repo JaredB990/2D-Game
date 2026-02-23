@@ -168,6 +168,7 @@ void Bullet::update(float deltaTime) {
                 enemy->health--;
                 if (enemy->health <= 0) {
                     enemy->destroy();
+                    scene->addScore(100);
                 }
                 break;
             }

@@ -7,6 +7,7 @@
 #include <glm/vec4.hpp>
 #include <vector>
 #include <memory>
+#include <iostream>
 
 #include "components.hpp"
 
@@ -71,7 +72,10 @@ public:
     }
   }
 
-  void addScore(int points) { score += points; }
+  void addScore(int points) {
+    score += points;
+    std::cout << "Score: " << score << std::endl;
+  }
   int getScore() const { return score; }
 
   std::vector<GameObject*>& getObjects() { return game_objects; }
