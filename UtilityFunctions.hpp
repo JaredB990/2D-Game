@@ -1,6 +1,7 @@
 #ifndef UTILITYFUNCTIONS_H
 #define UTILITYFUNCTIONS_H
 #include <SDL3/SDL.h>
+#include "engine.hpp"
 #include "player_ship.hpp"
 #include <map>
 #include <string>
@@ -28,4 +29,17 @@ class textureManager {
     std::map<std::string, SDL_Texture*>& getTextures() { return textures; }
     SDL_Texture* getTexture(const std::string& path); 
 };
+
+class levelManager {
+    public:
+    static levelManager& instance(){
+            static levelManager instance;
+            return instance;
+    }
+
+    void createLevels();
+    Scene* loadLevel(int levelNumber);
+    static std::vector<std::string> levelList(const std::string& path);
+};
+
 #endif // UTILITYFUNCTIONS_H

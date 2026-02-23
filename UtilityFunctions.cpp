@@ -56,3 +56,31 @@ SDL_Texture* textureManager::getTexture(const std::string& path) {
 }
 
 std::map<std::string, SDL_Texture*> textureManager::textures;
+
+void levelManager::createLevels() {
+    // start screen
+    Scene* startScene = new Scene();
+    auto* startText = new GameObject();
+    auto* startSprite = startText->addComponent<SpriteComponent>();
+    startSprite->loadSprite(Engine::instance().getRenderer(), textureManager::instance().getTexture("Sprites\\Start_Screen.png"), 0, 0, Engine::instance().getWindowWidth(), Engine::instance().getWindowHeight());
+    startScene->addObject(startText);
+    levelList.push_back(startScene);
+
+    // level 1
+
+
+    // end screen
+
+    
+}
+
+Scene* levelManager::loadLevel(int levelNumber) {
+    int index = 0;
+    for (auto& level : levelList) {
+        if (index == levelNumber) {
+            return level;
+        } 
+        index++;
+    }
+    return nullptr;
+}
