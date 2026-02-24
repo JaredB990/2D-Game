@@ -108,4 +108,3 @@ int Engine::getWindowHeight() const {
     SDL_GetWindowSize(window, nullptr, &h);
     return h;
 }
-
