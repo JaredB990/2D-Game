@@ -71,7 +71,7 @@ void EnemyShip::update(float deltaTime) {
         if (shootTimer >= shootInterval) {
             shoot(true, 0.5f);
             shootTimer = 0.0f;
-            SDL_Log("Enemy at (%.2f, %.2f) shoots!", rect->x, rect->y);
+            //SDL_Log("Enemy at (%.2f, %.2f) shoots!", rect->x, rect->y);
         }
     }
 }
@@ -168,7 +168,7 @@ void Bullet::update(float deltaTime) {
                 enemy->health--;
                 if (enemy->health <= 0) {
                     enemy->destroy();
-                    scene->addScore(100);
+                    scene->addScore(1);
                 }
                 break;
             }

@@ -38,9 +38,21 @@ int main(int argc, char** argv) {
 
     }
 
-    
+    GameObject scoreZero;
+    scoreZero.setOwned(false);
+
+    auto* scoreSprite = scoreZero.addComponent<SpriteComponent>();
+    scoreSprite->loadSprite(
+        engine.getRenderer(),
+        tm.getTexture("Sprites\\0.png"),
+        20.0f,  // x
+        20.0f,  // y
+        32.0f,  // width
+        48.0f   // height
+    );
 
 
+    GameScene.addObject(&scoreZero);
 
     GameScene.addObject(&playerShip);
 

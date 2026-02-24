@@ -40,6 +40,9 @@ class levelManager {
     void createLevels();
     Scene* loadLevel(int levelNumber);
     static std::vector<std::string> levelList(const std::string& path);
+
+    private:
+    std::vector<Scene*> scenes;
 };
 
 #endif // UTILITYFUNCTIONS_H

@@ -4,6 +4,7 @@
 #include <SDL3/SDL.h>
 #include <map>
 #include <filesystem>
+#include <vector>
 
 namespace fs = std::filesystem;
 
@@ -64,7 +65,7 @@ void levelManager::createLevels() {
     auto* startSprite = startText->addComponent<SpriteComponent>();
     startSprite->loadSprite(Engine::instance().getRenderer(), textureManager::instance().getTexture("Sprites\\Start_Screen.png"), 0, 0, Engine::instance().getWindowWidth(), Engine::instance().getWindowHeight());
     startScene->addObject(startText);
-    levelList.push_back(startScene);
+    scenes.push_back(startScene);
 
     // level 1
 
@@ -76,7 +77,7 @@ void levelManager::createLevels() {
 
 Scene* levelManager::loadLevel(int levelNumber) {
     int index = 0;
-    for (auto& level : levelList) {
+    for (auto& level : scenes) {
         if (index == levelNumber) {
             return level;
         } 

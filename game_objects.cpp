@@ -9,4 +9,3 @@ void GameObject::update(float deltaTime) {
     c->update(deltaTime);
   }
 }
-
