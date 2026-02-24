@@ -38,21 +38,22 @@ int main(int argc, char** argv) {
 
     }
 
-    GameObject scoreZero;
-    scoreZero.setOwned(false);
+    GameObject scoreOnes;
+    GameObject scoreTens;
+    GameObject scoreHundreds;
 
-    auto* scoreSprite = scoreZero.addComponent<SpriteComponent>();
-    scoreSprite->loadSprite(
-        engine.getRenderer(),
-        tm.getTexture("Sprites\\0.png"),
-        20.0f,  // x
-        20.0f,  // y
-        32.0f,  // width
-        48.0f   // height
-    );
+    auto* onesSprite = scoreOnes.addComponent<SpriteComponent>();
+    auto* tensSprite = scoreTens.addComponent<SpriteComponent>();
+    auto* hundredsSprite = scoreHundreds.addComponent<SpriteComponent>();
+
+    hundredsSprite->loadSprite(engine.getRenderer(), tm.getTexture("Sprites\\0.png"), 10, 10, 50, 70);
+    tensSprite->loadSprite(engine.getRenderer(), tm.getTexture("Sprites\\0.png"), 45, 10, 50, 70);
+    onesSprite->loadSprite(engine.getRenderer(), tm.getTexture("Sprites\\0.png"), 80, 10, 50, 70);
 
 
-    GameScene.addObject(&scoreZero);
+    GameScene.addObject(&scoreHundreds);
+    GameScene.addObject(&scoreTens);
+    GameScene.addObject(&scoreOnes);
 
     GameScene.addObject(&playerShip);
 
