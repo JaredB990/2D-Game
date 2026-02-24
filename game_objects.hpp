@@ -74,6 +74,7 @@ public:
 
   void addScore(int points) {
     score += points;
+    if (score > 999) score = 999; // Cap score at 999 for display purposes
     std::cout << "Score: " << score << std::endl;
   }
   int getScore() const { return score; }
