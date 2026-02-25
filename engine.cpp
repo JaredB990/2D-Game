@@ -11,7 +11,12 @@ Engine::Engine() { init(); }
 
 SDL_Renderer* Engine::getRenderer() { return this->renderer; };
 
-void Engine::setScene(Scene *scene) { this->scene = scene; }
+void Engine::setScenes(const std::vector<Scene*>& sceneList)
+{
+    scenes = sceneList;
+    if (!scenes.empty())
+        activeScene = scenes[0];
+}
 void Engine::run() {
     running = true;
 
@@ -27,11 +32,33 @@ void Engine::run() {
 
             if (event.type == SDL_EVENT_KEY_DOWN) {
                 Engine::keyEvents.push_back(event);
+            
+                if (event.type == SDL_EVENT_KEY_DOWN) {
+
+                    Engine::keyEvents.push_back(event);
+                    // Handle scene change)
+                    if (event.key.key == SDLK_RETURN) {
+
+                        if (activeScene == scenes[0]) {
+                        setActiveScene(1);
+                        }
+                        else if (activeScene == scenes[1] && false //Check if player is dead)
+                        )
+                        {
+                            setActiveScene(2);
+                        }
+                        
+                        else if (activeScene == scenes[2]) {
+                        setActiveScene(0);
+                        }
+                    }
+                }
             }
         }
 
         // ---- UPDATE ----
-        scene->updateScene(targetFrameTime);
+        if (activeScene)
+            activeScene->updateScene(targetFrameTime);
 
         // ---- RENDER ----
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
@@ -40,11 +67,17 @@ void Engine::run() {
 		SDL_FRect destRect = { 0, 0, (float)getWindowWidth(), (float)getWindowHeight()};
         SDL_RenderTexture(renderer, backgroundTexture, NULL, &destRect);
 
-        scene->updateScene(targetFrameTime);   // <-- ideally separate update and render
+        if (activeScene)
+            activeScene->updateScene(targetFrameTime);
 
         SDL_RenderPresent(renderer);
 
         SDL_Delay(targetFrameTime);
+
+        
+
+
+    
     }
 }
 
@@ -107,4 +140,17 @@ int Engine::getWindowHeight() const {
     int h;
     SDL_GetWindowSize(window, nullptr, &h);
     return h;
+}
+
+void Engine::setActiveScene(size_t index)
+{
+    if (index < scenes.size())
+        activeScene = scenes[index];
+}
+
+Scene* Engine::getScene(size_t index) const
+{
+    if (index < scenes.size())
+        return scenes[index];
+    return nullptr;
 }

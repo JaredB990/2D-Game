@@ -61,6 +61,6 @@ int main(int argc, char** argv) {
 
 
 
-    engine.setScene(&GameScene);
+    engine.setScenes({ &TitleScene, &GameScene, &EndScene });
     engine.run();
 }

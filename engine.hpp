@@ -3,6 +3,8 @@
 
 #include <SDL3/SDL.h>
 #include "game_objects.hpp"
+#include <vector>
+
 
 #define FPS 60
 #define MAX_EVENTS 128
@@ -25,7 +27,9 @@ class Engine {
 		Engine& operator=(const Engine&) = delete;
 
 		SDL_Renderer* getRenderer();
-		void setScene(Scene* scene);
+		void setScenes(const std::vector<Scene*>& sceneList);
+		Scene* getScene(size_t index) const;
+		void setActiveScene(size_t index);
 		void run();
 
 		int getWindowWidth() const;
@@ -45,7 +49,8 @@ class Engine {
 		// Notice that we are storing copies of the
 		// events, not pointers or references.
 		static std::vector<SDL_Event> keyEvents;
-		Scene* scene;
+		std::vector<Scene*> scenes;
+		Scene* activeScene = nullptr;
 
 };
 

@@ -97,7 +97,7 @@ void PlayerShip::update(float deltaTime) {
     }
 
     // Collision detection with enemies
-    Scene* scene = Engine::instance().scene;
+    Scene* scene = Engine::instance().activeScene;
     if (!scene) return;
 
     for (GameObject* go : scene->getObjects()) {
@@ -124,7 +124,7 @@ void PlayerShip::update(float deltaTime) {
 }
 
 void Ship::shoot(bool isEnemy, float speed) {
-    Scene *scene = Engine::instance().scene;
+    Scene *scene = Engine::instance().activeScene;
     if (!isEnemy) {
         // Create a new bullet above the player
         auto* bullet = new Bullet(textureManager::instance().getTexture("Sprites\\Laser_bullet.png"), rect->x + rect->w / 2 - 8, rect->y - 16, 16, 16, speed);
@@ -151,7 +151,7 @@ void Bullet::update(float deltaTime) {
     GameObject::update(deltaTime);
     rect->y += speed * deltaTime;
 
-    Scene* scene = Engine::instance().scene;
+    Scene* scene = Engine::instance().activeScene;
     if (!scene) return;
     if (!isEnemyBullet) {
         for (GameObject* go : scene->getObjects()) {
