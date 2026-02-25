@@ -27,10 +27,11 @@ class EnemyShip : public Ship {
         void update(float deltaTime) override;
     private:
         float shootTimer = 0.0f;
-        float shootInterval = 60.0f; // shoot every 1 second
+        float shootInterval = 600.0f; // shoot every 1 second
         float aiMoveTimer = 0.0f;
-        float aiMoveInterval = 30.0f; // move every every 1/2 second
+        float aiMoveInterval = 60.0f; // move every every 1/2 second
         int health;
+        float enemyDir = 1.0f; // 1 for right, -1 for left
         friend class Bullet;
     };
 

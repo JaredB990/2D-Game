@@ -56,22 +56,63 @@ void EnemyShip::update(float deltaTime) {
     GameObject::update(deltaTime);
     aiMoveTimer += 1;
     if (aiMoveTimer >= aiMoveInterval) {
-        down(aiMoveTimer);
-        aiMoveTimer = 0.0f;
+        Scene* scene = Engine::instance().activeScene;
+        if (!scene) return;
+
+        float windowWidth  = (float)Engine::instance().getWindowWidth();
+        float windowHeight = (float)Engine::instance().getWindowHeight();
+
+        // 1️⃣ Find the lead ship in the current direction
+        float leadX = enemyDir > 0 ? 0.0f : windowWidth; // rightmost if moving right, leftmost if moving left
+        for (GameObject* go : scene->getObjects()) {
+            EnemyShip* e = dynamic_cast<EnemyShip*>(go);
+            if (!e) continue;
+
+            float ex = e->rect->x;
+            if (enemyDir > 0) leadX = std::max(leadX, ex + e->rect->w);
+            else              leadX = std::min(leadX, ex);
+        }
+
+        // 2️⃣ Move all enemies horizontally
+        for (GameObject* go : scene->getObjects()) {
+            EnemyShip* e = dynamic_cast<EnemyShip*>(go);
+            if (!e) continue;
+            e->rect->x += pps * enemyDir; // move step
+        }
+
+        // 3️⃣ Check if lead hits the boundary
+        bool hitBoundary = (enemyDir > 0 && leadX >= windowWidth) ||
+                           (enemyDir < 0 && leadX <= 0);
+
+        if (hitBoundary) {
+            enemyDir *= -1; // reverse direction
+
+            // Move all enemies down by a fixed amount
+            const float descendAmount = 1.0f; // pixels
+            for (GameObject* go : scene->getObjects()) {
+                EnemyShip* e = dynamic_cast<EnemyShip*>(go);
+                if (!e) continue;
+                e->rect->y += descendAmount;
+
+                // Keep them inside horizontal bounds
+                if (enemyDir > 0) e->rect->x = std::min(e->rect->x, windowWidth - e->rect->w);
+                else              e->rect->x = std::max(e->rect->x, 0.0f);
+            }
+        }
+
+        aiMoveTimer = 0.0f; // reset timer
     }
 
-    float windowWidth  = (float)Engine::instance().getWindowWidth();
+    // 4️⃣ Clamp vertical position
     float windowHeight = (float)Engine::instance().getWindowHeight();
-
-    rect->x = UtilityFunctions::enemyClamp(rect->x, 0.0f, windowWidth - rect->w, this);
     rect->y = UtilityFunctions::enemyClamp(rect->y, 0.0f, windowHeight - rect->h, this);
 
+    // 5️⃣ Handle shooting cooldown
     if (canShoot) {
         shootTimer += 1;
         if (shootTimer >= shootInterval) {
             shoot(true, 0.5f);
             shootTimer = 0.0f;
-            //SDL_Log("Enemy at (%.2f, %.2f) shoots!", rect->x, rect->y);
         }
     }
 }

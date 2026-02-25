@@ -21,8 +21,8 @@ return value;
 }
 
 float UtilityFunctions::enemyClamp(float value, float min, float max, EnemyShip* enemy) {
-if (value < min) enemy->destroy();
-if (value > max) enemy->destroy();
+if (value < min) return min;
+if (value > max) return max;
 return value;
 }
 
