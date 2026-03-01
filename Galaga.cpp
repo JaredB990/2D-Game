@@ -42,6 +42,11 @@ int main(int argc, char** argv) {
     GameObject scoreTens;
     GameObject scoreHundreds;
 
+    GameObject TitleImage;
+    auto* titleSprite = TitleImage.addComponent<SpriteComponent>();
+    titleSprite->loadSprite(engine.getRenderer(), tm.getTexture("Sprites\\Title.png"), 128, 128, 1024, 512);
+    TitleScene.addObject(&TitleImage);
+
     auto* onesSprite = scoreOnes.addComponent<SpriteComponent>();
     auto* tensSprite = scoreTens.addComponent<SpriteComponent>();
     auto* hundredsSprite = scoreHundreds.addComponent<SpriteComponent>();
