@@ -27,7 +27,7 @@ class EnemyShip : public Ship {
         void update(float deltaTime) override;
     private:
         float shootTimer = 0.0f;
-        float shootInterval = 600.0f; // shoot every 1 second
+        float shootInterval = 400.0f;
         float aiMoveTimer = 0.0f;
         float aiMoveInterval = 60.0f; // move every every 1/2 second
         int health;

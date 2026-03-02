@@ -62,7 +62,7 @@ void EnemyShip::update(float deltaTime) {
         float windowWidth  = (float)Engine::instance().getWindowWidth();
         float windowHeight = (float)Engine::instance().getWindowHeight();
 
-        // 1️⃣ Find the lead ship in the current direction
+        // Find the lead ship in the current direction
         float leadX = enemyDir > 0 ? 0.0f : windowWidth; // rightmost if moving right, leftmost if moving left
         for (GameObject* go : scene->getObjects()) {
             EnemyShip* e = dynamic_cast<EnemyShip*>(go);
@@ -73,14 +73,14 @@ void EnemyShip::update(float deltaTime) {
             else              leadX = std::min(leadX, ex);
         }
 
-        // 2️⃣ Move all enemies horizontally
+        // Move all enemies horizontally
         for (GameObject* go : scene->getObjects()) {
             EnemyShip* e = dynamic_cast<EnemyShip*>(go);
             if (!e) continue;
             e->rect->x += pps * enemyDir; // move step
         }
 
-        // 3️⃣ Check if lead hits the boundary
+        // Check if lead hits the boundary
         bool hitBoundary = (enemyDir > 0 && leadX >= windowWidth) ||
                            (enemyDir < 0 && leadX <= 0);
 
@@ -103,11 +103,11 @@ void EnemyShip::update(float deltaTime) {
         aiMoveTimer = 0.0f; // reset timer
     }
 
-    // 4️⃣ Clamp vertical position
+    // Clamp vertical position
     float windowHeight = (float)Engine::instance().getWindowHeight();
     rect->y = UtilityFunctions::enemyClamp(rect->y, 0.0f, windowHeight - rect->h, this);
 
-    // 5️⃣ Handle shooting cooldown
+    //Handle shooting cooldown
     if (canShoot) {
         shootTimer += 1;
         if (shootTimer >= shootInterval) {
@@ -158,6 +158,7 @@ void PlayerShip::update(float deltaTime) {
             // destroy player if HP <= 0
             if (health <= 0) {
                 this->destroy();
+                Engine::instance().setActiveScene(0);
             }
             break;
         }
@@ -230,6 +231,7 @@ void Bullet::update(float deltaTime) {
                 player->health--;
                 if (player->health <= 0) {
                     player->destroy();
+                    Engine::instance().setActiveScene(2);
                 }
                 break;
             }

@@ -37,7 +37,7 @@ void Engine::run() {
 
                     Engine::keyEvents.push_back(event);
                     // Handle scene change)
-                    if (event.key.key == SDLK_RETURN) {
+                    if (event.key.key == SDLK_RETURN && activeScene != scenes[2]) {
 
                         if (activeScene == scenes[0]) {
                         setActiveScene(1);
