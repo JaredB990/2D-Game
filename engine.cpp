@@ -7,7 +7,15 @@
 // is with a static data structure.
 std::vector<SDL_Event> Engine::keyEvents;
 
-Engine::Engine() { init(); }
+Engine::Engine() { 
+    init(); 
+    ma_result result = ma_engine_init(NULL, &audioEngine);
+    if (result != MA_SUCCESS) {
+    printf("Audio engine failed to initialize!\n");
+    }
+}
+
+ma_engine Engine::audioEngine;
 
 SDL_Renderer* Engine::getRenderer() { return this->renderer; };
 

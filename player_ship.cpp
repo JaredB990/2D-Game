@@ -2,7 +2,10 @@
 #include "engine.hpp"
 #include "game_objects.hpp"
 #include "UtilityFunctions.hpp"
+#include "miniaudio.h"
 #include <SDL3/SDL.h>
+#include <filesystem>
+#include <iostream>
 
 static inline bool rectsIntersect(const SDL_FRect* a, const SDL_FRect* b) {
     if (!a || !b) return false;
@@ -133,6 +136,11 @@ void PlayerShip::update(float deltaTime) {
             right(deltaTime);
         }
         if (it->key.key == SDLK_SPACE) {
+            ma_result result = ma_engine_play_sound(&Engine::audioEngine, "pew.mp3", NULL);
+
+            if (result != MA_SUCCESS) {
+                printf("Failed to play sound: %d\n", result);
+            }
             shoot();
         }
     }
@@ -155,9 +163,17 @@ void PlayerShip::update(float deltaTime) {
             health--;
             // destroy enemy
             enemy->destroy();
+            ma_result result = ma_engine_play_sound(&Engine::audioEngine, "Boom.mp3", NULL);
+            if (result != MA_SUCCESS) {
+                printf("Failed to play sound: %d\n", result);
+            }
             // destroy player if HP <= 0
             if (health <= 0) {
                 this->destroy();
+                ma_result result = ma_engine_play_sound(&Engine::audioEngine, "Boom.mp3", NULL);
+                if (result != MA_SUCCESS) {
+                    printf("Failed to play sound: %d\n", result);
+                }
                 Engine::instance().setActiveScene(0);
             }
             break;
@@ -207,9 +223,17 @@ void Bullet::update(float deltaTime) {
             SDL_FRect* er = enemySprite->getRect();
             if (rectsIntersect(rect, er)) {
                     this->destroy();
+                    ma_result result = ma_engine_play_sound(&Engine::audioEngine, "Boom.mp3", NULL);
+                    if (result != MA_SUCCESS) {
+                        printf("Failed to play sound: %d\n", result);
+                    }
                 enemy->health--;
                 if (enemy->health <= 0) {
                     enemy->destroy();
+                    ma_result result = ma_engine_play_sound(&Engine::audioEngine, "Boom.mp3", NULL);
+                    if (result != MA_SUCCESS) {
+                        printf("Failed to play sound: %d\n", result);
+                    }
                     scene->addScore(1);
                 }
                 break;
@@ -228,9 +252,17 @@ void Bullet::update(float deltaTime) {
             SDL_FRect* er = playerSprite->getRect();
             if (rectsIntersect(rect, er)) {
                     this->destroy();
+                    ma_result result = ma_engine_play_sound(&Engine::audioEngine, "Boom.mp3", NULL);
+                    if (result != MA_SUCCESS) {
+                        printf("Failed to play sound: %d\n", result);
+                    }
                 player->health--;
                 if (player->health <= 0) {
                     player->destroy();
+                    ma_result result = ma_engine_play_sound(&Engine::audioEngine, "Boom.mp3", NULL);
+                    if (result != MA_SUCCESS) {
+                        printf("Failed to play sound: %d\n", result);
+                    }
                     Engine::instance().setActiveScene(2);
                 }
                 break;

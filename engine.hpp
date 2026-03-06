@@ -3,6 +3,7 @@
 
 #include <SDL3/SDL.h>
 #include "game_objects.hpp"
+#include "miniaudio.h"
 #include <vector>
 
 
@@ -51,6 +52,8 @@ class Engine {
 		static std::vector<SDL_Event> keyEvents;
 		std::vector<Scene*> scenes;
 		Scene* activeScene = nullptr;
+
+		static ma_engine audioEngine;
 
 };
 
